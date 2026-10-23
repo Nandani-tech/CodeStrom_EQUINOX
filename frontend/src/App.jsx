@@ -120,7 +120,7 @@ export default function App() {
   const commonViewProps = { lang, t, onShowToast: showToast };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-indigo-600 selection:text-white">
+    <div className="min-h-screen bg-[#faf7f2] text-stone-800 font-sans selection:bg-apricot-400 selection:text-white">
       
       {/* Toast notifications */}
       <Toast toast={toast} onClose={() => setToast(null)} />
