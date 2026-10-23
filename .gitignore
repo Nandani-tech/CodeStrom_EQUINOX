@@ -1,0 +1,28 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Databases & local uploads
+*.db
+shopledger.db
+uploads/*
+!uploads/.gitkeep
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Node / Frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Operating System
+.DS_Store
+Thumbs.db
