@@ -8,11 +8,11 @@ export default function Card({ children, className = '', onClick }) {
         glass-card
         p-5 sm:p-6
         rounded-2xl
-        bg-white/5
+        bg-white/90
         backdrop-blur-md
-        border border-white/10
-        hover:border-warm-amber-400/30
-        hover:shadow-lg hover:shadow-warm-amber-500/5
+        border border-apricot-200
+        hover:border-apricot-400
+        hover:shadow-xl hover:shadow-apricot-500/10
         transition-all duration-200
         ${className}
       `}

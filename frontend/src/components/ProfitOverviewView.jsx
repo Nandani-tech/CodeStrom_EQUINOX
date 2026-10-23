@@ -111,24 +111,24 @@ export default function ProfitOverviewView({ lang = 'en', t, onShowToast }) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight flex items-center space-x-2.5">
-            <BarChart2 className="w-6 h-6 text-violet-400" />
+          <h2 className="text-xl sm:text-2xl font-black text-stone-900 tracking-tight flex items-center space-x-2.5">
+            <BarChart2 className="w-6 h-6 text-apricot-600" />
             <span>{t.profit.title}</span>
           </h2>
-          <p className="text-xs text-slate-400 mt-1">{t.profit.subtitle}</p>
+          <p className="text-xs text-stone-500 font-medium mt-1">{t.profit.subtitle}</p>
         </div>
 
-        {/* Period Selector */}
+        {/* Period Selector - Warm Pill Tabs */}
         <div className="flex flex-col space-y-2">
-          <div className="flex items-center space-x-1.5 flex-wrap gap-1.5">
+          <div className="flex items-center space-x-1.5 flex-wrap gap-1.5 bg-white p-1 rounded-2xl border border-apricot-200 shadow-2xs">
             {PERIOD_OPTIONS.map((p) => (
               <button
                 key={p.id}
                 onClick={() => setPeriod(p.id)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
                   period === p.id
-                    ? 'bg-violet-600 text-white border-violet-500 shadow-md shadow-violet-600/20'
-                    : 'text-slate-400 border-slate-800 hover:text-white hover:border-slate-700 bg-slate-900'
+                    ? 'bg-gradient-to-r from-apricot-500 to-amber-500 text-white shadow-xs'
+                    : 'text-stone-600 hover:text-stone-900 hover:bg-apricot-50'
                 }`}
               >
                 {lang === 'hi' ? p.hi : p.en}
@@ -141,18 +141,18 @@ export default function ProfitOverviewView({ lang = 'en', t, onShowToast }) {
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-white text-xs outline-none focus:ring-1 focus:ring-violet-500"
+                className="px-3 py-1.5 rounded-xl bg-white border border-apricot-200 text-stone-900 text-xs outline-none focus:ring-1 focus:ring-apricot-400 font-semibold"
               />
-              <span className="text-slate-500 text-xs">to</span>
+              <span className="text-stone-400 text-xs font-bold">to</span>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-white text-xs outline-none focus:ring-1 focus:ring-violet-500"
+                className="px-3 py-1.5 rounded-xl bg-white border border-apricot-200 text-stone-900 text-xs outline-none focus:ring-1 focus:ring-apricot-400 font-semibold"
               />
               <button
                 onClick={handleCustomLoad}
-                className="px-3 py-1.5 rounded-lg text-xs font-bold text-white bg-violet-600 hover:bg-violet-500 transition-colors"
+                className="px-4 py-1.5 rounded-xl text-xs font-black text-white bg-gradient-to-r from-apricot-500 to-amber-500 hover:from-apricot-600 shadow-xs transition-colors"
               >
                 {lang === 'hi' ? 'देखें' : 'Apply'}
               </button>
@@ -167,45 +167,45 @@ export default function ProfitOverviewView({ lang = 'en', t, onShowToast }) {
           label={t.profit.recordedSales}
           value={fmt(sales)}
           icon={TrendingUp}
-          color="text-emerald-400"
+          color="text-emerald-700"
           sub={lang === 'hi' ? `${data?.sales_count || 0} दर्ज बिक्री + ${data?.receipt_count || 0} बिल रसीदें` : `${data?.sales_count || 0} sale records + ${data?.receipt_count || 0} receipts`}
         />
         <MetricCard
           label={t.profit.stockPurchases}
           value={fmt(cogs)}
           icon={TrendingDown}
-          color="text-amber-400"
+          color="text-amber-800"
           sub={lang === 'hi' ? 'सप्लायर बिल (माल लागत)' : 'Stock/COGS from suppliers'}
         />
         <MetricCard
           label={t.profit.operatingExpenses}
           value={fmt(opex)}
           icon={TrendingDown}
-          color="text-rose-400"
+          color="text-rose-600"
           sub={lang === 'hi' ? 'बिजली, भाड़ा, अन्य खर्चे' : 'Electricity, rent, overhead'}
         />
         <MetricCard
           label={t.profit.estimatedGrossProfit}
           value={fmt(gross_profit)}
           icon={gross_profit >= 0 ? TrendingUp : TrendingDown}
-          color={gross_profit >= 0 ? 'text-indigo-400' : 'text-rose-400'}
+          color={gross_profit >= 0 ? 'text-apricot-800' : 'text-rose-600'}
           sub={`${t.profit.profitMargin}: ${pct(gross_margin)}`}
         />
-        <div className={`glass-card p-5 rounded-2xl col-span-2 lg:col-span-2 ${isProfit ? 'border-emerald-500/30 bg-emerald-950/15' : 'border-rose-500/30 bg-rose-950/15'}`}>
+        <div className={`glass-card p-5 rounded-2xl col-span-2 lg:col-span-2 ${isProfit ? 'border-emerald-300 bg-gradient-to-br from-emerald-50/80 to-white' : 'border-rose-300 bg-gradient-to-br from-rose-50/80 to-white'}`}>
           <div className="flex items-center justify-between mb-2">
-            <span className={`text-[11px] font-bold uppercase tracking-wider ${isProfit ? 'text-emerald-300' : 'text-rose-300'}`}>
+            <span className={`text-[11px] font-black uppercase tracking-wider ${isProfit ? 'text-emerald-800' : 'text-rose-800'}`}>
               {t.profit.estimatedNetProfit}
             </span>
-            {isProfit ? <TrendingUp className="w-5 h-5 text-emerald-400" /> : <TrendingDown className="w-5 h-5 text-rose-400" />}
+            {isProfit ? <TrendingUp className="w-5 h-5 text-emerald-600" /> : <TrendingDown className="w-5 h-5 text-rose-600" />}
           </div>
-          <p className={`text-3xl font-black ${isProfit ? 'text-emerald-300' : 'text-rose-400'}`}>{fmt(net_profit)}</p>
+          <p className={`text-3xl font-black tracking-tight ${isProfit ? 'text-emerald-800' : 'text-rose-600'}`}>{fmt(net_profit)}</p>
           <div className="flex items-center space-x-4 mt-2 text-xs">
-            <span className={`font-semibold ${isProfit ? 'text-emerald-400' : 'text-rose-400'}`}>
+            <span className={`font-bold ${isProfit ? 'text-emerald-700' : 'text-rose-600'}`}>
               {t.profit.profitMargin}: {pct(net_margin)}
             </span>
             {data?.period_label && (
-              <span className="text-slate-400 flex items-center space-x-1">
-                <Calendar className="w-3 h-3" />
+              <span className="text-stone-500 font-semibold flex items-center space-x-1">
+                <Calendar className="w-3.5 h-3.5 text-apricot-600" />
                 <span>{data.period_label}</span>
               </span>
             )}

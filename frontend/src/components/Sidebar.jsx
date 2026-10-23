@@ -123,29 +123,29 @@ export default function Sidebar({
 
       {/* Sidebar Container */}
       <aside 
-        className={`fixed inset-y-0 left-0 z-50 w-64 sm:w-72 bg-slate-950/95 border-r border-slate-800/90 backdrop-blur-xl flex flex-col justify-between transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 sm:w-72 bg-morning-100/95 border-r border-apricot-200 backdrop-blur-xl flex flex-col justify-between transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           mobileOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'
         }`}
       >
         {/* Top: Brand Header */}
-        <div className="p-5 border-b border-slate-800/80">
+        <div className="p-5 border-b border-apricot-200/80 bg-white/60">
           <div className="flex items-center justify-between">
             <div 
               className="flex items-center space-x-3 cursor-pointer group" 
               onClick={() => handleNavClick('hisab')}
             >
-              <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform">
-                <Receipt className="w-5 h-5 text-white" />
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-slate-950 animate-pulse" />
+              <div className="relative flex items-center justify-center w-11 h-11 rounded-2xl bg-gradient-to-tr from-apricot-500 via-amber-500 to-apricot-400 shadow-md shadow-apricot-500/30 group-hover:scale-105 transition-transform">
+                <Store className="w-5 h-5 text-white" />
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white animate-pulse" />
               </div>
               <div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-xl font-bold tracking-tight text-white font-sans">
-                    Shop<span className="text-indigo-400">Ledger</span>
+                <div className="flex items-center space-x-1.5">
+                  <span className="text-xl font-black tracking-tight text-stone-900 font-sans">
+                    Dukan<span className="text-apricot-600">Desk</span>
                   </span>
                 </div>
-                <span className="inline-flex items-center text-[10px] font-semibold text-indigo-400">
-                  <Sparkles className="w-3 h-3 mr-1" /> Gemini 2.5 AI
+                <span className="inline-flex items-center text-[10px] font-bold text-apricot-700">
+                  <Sparkles className="w-3 h-3 mr-1 text-apricot-600" /> Gemini 2.5 AI Powered
                 </span>
               </div>
             </div>
@@ -153,7 +153,7 @@ export default function Sidebar({
             {/* Mobile Close Button */}
             <button
               onClick={() => setMobileOpen(false)}
-              className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              className="lg:hidden p-2 rounded-xl text-stone-500 hover:text-stone-900 hover:bg-apricot-100 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -164,10 +164,10 @@ export default function Sidebar({
         <div className="flex-1 overflow-y-auto px-3 py-4 space-y-4">
           {navGroups.map((group) => (
             <div key={group.groupLabel}>
-              <div className="px-2 mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+              <div className="px-2.5 mb-1.5 text-[10px] font-extrabold uppercase tracking-wider text-stone-400">
                 {group.groupLabel}
               </div>
-              <div className="space-y-0.5">
+              <div className="space-y-1">
                 {group.items.map((item) => {
                   const Icon = item.icon;
                   const isActive = currentTab === item.id;
@@ -176,30 +176,36 @@ export default function Sidebar({
                     <button
                       key={item.id}
                       onClick={() => handleNavClick(item.id)}
-                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all group ${
+                      className={`w-full flex items-center justify-between px-3 py-3 rounded-2xl text-xs font-bold transition-all group ${
                         isActive
-                          ? 'bg-indigo-600/15 text-indigo-300 border border-indigo-500/30 shadow-md shadow-indigo-600/5'
-                          : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900 border border-transparent'
+                          ? 'bg-gradient-to-r from-apricot-500 to-amber-500 text-white shadow-md shadow-apricot-500/25 scale-[1.01]'
+                          : 'text-stone-700 hover:text-stone-900 hover:bg-apricot-100/70 border border-transparent'
                       }`}
                     >
                       <div className="flex items-center space-x-3 min-w-0">
-                        <div className={`p-1.5 rounded-lg transition-colors ${
+                        <div className={`p-2 rounded-xl transition-colors ${
                           isActive 
-                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30' 
-                            : 'bg-slate-900 text-slate-400 group-hover:text-indigo-400 group-hover:bg-slate-800'
+                            ? 'bg-white/20 text-white' 
+                            : 'bg-white text-stone-600 group-hover:text-apricot-600 group-hover:bg-white shadow-xs border border-apricot-200/50'
                         }`}>
-                          <Icon className="w-3.5 h-3.5" />
+                          <Icon className="w-4 h-4" />
                         </div>
                         <div className="text-left truncate">
-                          <span className="block truncate text-xs font-semibold">{item.label}</span>
-                          <span className="block text-[10px] text-slate-500 font-normal truncate">
+                          <span className={`block truncate text-xs font-bold ${isActive ? 'text-white' : 'text-stone-800'}`}>
+                            {item.label}
+                          </span>
+                          <span className={`block text-[10px] font-medium truncate ${isActive ? 'text-white/80' : 'text-stone-400'}`}>
                             {item.desc}
                           </span>
                         </div>
                       </div>
 
                       {item.badge && (
-                        <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-bold border shrink-0 ${item.badgeColor}`}>
+                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold border shrink-0 ${
+                          isActive 
+                            ? 'bg-white/25 text-white border-white/40' 
+                            : 'bg-amber-100 text-amber-800 border-amber-300'
+                        }`}>
                           {item.badge}
                         </span>
                       )}
@@ -210,14 +216,14 @@ export default function Sidebar({
             </div>
           ))}
 
-          {/* Quick Upload CTA */}
+          {/* Quick Upload CTA - Golden Apricot Highlight Button */}
           <div className="pt-2 px-1">
             <button
               onClick={() => {
                 if (onOpenUpload) onOpenUpload();
                 else handleNavClick('upload');
               }}
-              className="w-full flex items-center justify-center space-x-2 py-2.5 px-4 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 shadow-lg shadow-indigo-600/25 active:scale-95 transition-all"
+              className="w-full flex items-center justify-center space-x-2 py-3 px-4 rounded-2xl text-xs font-extrabold text-white bg-gradient-to-r from-apricot-500 via-amber-500 to-apricot-600 hover:from-apricot-600 hover:to-amber-600 shadow-lg shadow-apricot-500/25 active:scale-95 transition-all"
             >
               <UploadCloud className="w-4 h-4" />
               <span>{t?.common?.uploadReceipt || 'Upload Bill'}</span>
@@ -226,25 +232,25 @@ export default function Sidebar({
         </div>
 
         {/* Bottom Section */}
-        <div className="p-4 border-t border-slate-800/80 bg-slate-950/60 space-y-3">
+        <div className="p-4 border-t border-apricot-200/80 bg-white/70 space-y-3">
           
           {/* Language Toggle */}
           {setLang && (
-            <div className="flex items-center justify-between p-2.5 rounded-xl bg-slate-900 border border-slate-800/90 text-xs">
+            <div className="flex items-center justify-between p-2 rounded-xl bg-morning-100 border border-apricot-200 text-xs">
               <div className="flex items-center space-x-2">
-                <Languages className="w-4 h-4 text-indigo-400" />
-                <span className="text-slate-300 font-medium text-[11px]">Language / भाषा</span>
+                <Languages className="w-4 h-4 text-apricot-600" />
+                <span className="text-stone-700 font-bold text-[11px]">भाषा / Language</span>
               </div>
-              <div className="flex items-center space-x-1 bg-slate-800 rounded-lg p-0.5">
+              <div className="flex items-center space-x-1 bg-white rounded-lg p-0.5 border border-apricot-200 shadow-2xs">
                 <button
                   onClick={() => setLang('en')}
-                  className={`px-2.5 py-1 rounded-md text-[10px] font-bold transition-all ${lang === 'en' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                  className={`px-2.5 py-1 rounded-md text-[10px] font-bold transition-all ${lang === 'en' ? 'bg-apricot-500 text-white shadow-xs' : 'text-stone-600 hover:text-stone-900'}`}
                 >
                   EN
                 </button>
                 <button
                   onClick={() => setLang('hi')}
-                  className={`px-2.5 py-1 rounded-md text-[10px] font-bold transition-all ${lang === 'hi' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'}`}
+                  className={`px-2.5 py-1 rounded-md text-[10px] font-bold transition-all ${lang === 'hi' ? 'bg-apricot-500 text-white shadow-xs' : 'text-stone-600 hover:text-stone-900'}`}
                 >
                   हिं
                 </button>
@@ -254,16 +260,16 @@ export default function Sidebar({
 
           {/* AI Engine Status */}
           <div 
-            title={healthData?.gemini_configured ? "Gemini 2.5 Flash Connected" : "Local Python Financial Engine Active (Add GEMINI_API_KEY in .env for Gemini multimodal API)"}
-            className="flex items-center justify-between p-2.5 rounded-xl bg-slate-900 border border-slate-800/90 text-xs"
+            title={healthData?.gemini_configured ? "Gemini 2.5 Flash Connected" : "Local Python Financial Engine Active"}
+            className="flex items-center justify-between p-2 rounded-xl bg-morning-100 border border-apricot-200 text-xs"
           >
             <div className="flex items-center space-x-2">
-              <span className={`w-2.5 h-2.5 rounded-full ${healthData?.gemini_configured ? 'bg-emerald-400 glow-emerald' : 'bg-indigo-400 glow-indigo'}`} />
-              <span className="text-[11px] font-medium text-slate-300">
-                {healthData?.gemini_configured ? 'Gemini 2.5 Flash' : 'Analytical Engine'}
+              <span className={`w-2.5 h-2.5 rounded-full ${healthData?.gemini_configured ? 'bg-emerald-500 glow-emerald' : 'bg-apricot-500 glow-apricot'}`} />
+              <span className="text-[11px] font-bold text-stone-700">
+                {healthData?.gemini_configured ? 'Gemini 2.5 Flash' : 'Smart Engine'}
               </span>
             </div>
-            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">
+            <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
               {t?.common?.online || 'Online'}
             </span>
           </div>
@@ -275,9 +281,9 @@ export default function Sidebar({
               href={getCsvExportUrl('confirmed')}
               download
               title="Export Confirmed Receipts to CSV"
-              className="flex items-center justify-center space-x-1.5 py-2 px-2.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800 border border-slate-800 transition-colors"
+              className="flex items-center justify-center space-x-1.5 py-2 px-2.5 rounded-xl text-[11px] font-bold text-stone-700 hover:text-stone-900 bg-white hover:bg-apricot-50 border border-apricot-200 shadow-2xs transition-colors"
             >
-              <Download className="w-3.5 h-3.5 text-slate-400" />
+              <Download className="w-3.5 h-3.5 text-apricot-600" />
               <span>{t?.common?.exportCsv || 'Export CSV'}</span>
             </a>
 
@@ -286,16 +292,16 @@ export default function Sidebar({
               onClick={onResetSeed}
               disabled={isResetting}
               title="Reseed Indian Shopkeeper Demo Data"
-              className="flex items-center justify-center space-x-1.5 py-2 px-2.5 rounded-xl text-[11px] font-semibold text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800 border border-slate-800 transition-colors disabled:opacity-50"
+              className="flex items-center justify-center space-x-1.5 py-2 px-2.5 rounded-xl text-[11px] font-bold text-stone-700 hover:text-stone-900 bg-white hover:bg-apricot-50 border border-apricot-200 shadow-2xs transition-colors disabled:opacity-50"
             >
-              <RotateCcw className={`w-3.5 h-3.5 text-indigo-400 ${isResetting ? 'animate-spin' : ''}`} />
+              <RotateCcw className={`w-3.5 h-3.5 text-apricot-600 ${isResetting ? 'animate-spin' : ''}`} />
               <span>{isResetting ? (lang === 'hi' ? 'लोड...' : 'Seeding...') : (t?.common?.resetDemo || 'Reset')}</span>
             </button>
           </div>
 
-          <div className="text-center pt-1">
-            <span className="text-[10px] text-slate-500 font-mono">
-              ShopLedger v2.0 · Hackathon Edition
+          <div className="text-center pt-0.5">
+            <span className="text-[10px] text-stone-400 font-medium">
+              DukanDesk · Kirana Friendly v2.0
             </span>
           </div>
 

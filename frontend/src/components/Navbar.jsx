@@ -78,7 +78,7 @@ export default function Navbar({
   const attentionCount = pendingCount + duplicateCount;
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
+    <header className="sticky top-0 z-30 w-full border-b border-apricot-200/80 bg-white/85 backdrop-blur-md shadow-sm shadow-apricot-500/5">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
@@ -86,28 +86,28 @@ export default function Navbar({
           <div className="flex items-center space-x-3.5">
             <button
               onClick={() => setMobileOpen && setMobileOpen(true)}
-              className="lg:hidden p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-900 border border-slate-800 transition-colors"
+              className="lg:hidden p-2.5 rounded-xl text-stone-600 hover:text-stone-900 hover:bg-apricot-100 border border-apricot-200 transition-colors shadow-sm"
               title="Open Navigation Menu"
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="w-5 h-5 text-apricot-700" />
             </button>
 
             <div className="flex items-center space-x-2.5">
-              <div className="hidden sm:flex p-2 rounded-xl bg-indigo-600/15 text-indigo-400 border border-indigo-500/20">
-                <Icon className="w-4 h-4" />
+              <div className="hidden sm:flex p-2.5 rounded-xl bg-gradient-to-br from-apricot-100 to-apricot-200 text-apricot-800 border border-apricot-300 shadow-sm">
+                <Icon className="w-4 h-4 text-apricot-700" />
               </div>
               <div>
                 <div className="flex items-center space-x-2">
-                  <h1 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                  <h1 className="text-base sm:text-lg font-extrabold text-stone-900 tracking-tight">
                     {tabText.title}
                   </h1>
                   {currentTab === 'receipts' && attentionCount > 0 && (
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300 shadow-sm">
                       {attentionCount} {lang === 'hi' ? 'जांचें' : 'Need Review'}
                     </span>
                   )}
                 </div>
-                <p className="text-[11px] text-slate-400 hidden md:block">
+                <p className="text-[11px] text-stone-500 hidden md:block font-medium">
                   {tabText.subtitle}
                 </p>
               </div>
@@ -118,30 +118,30 @@ export default function Navbar({
           <div className="flex items-center space-x-2">
             {/* Language Toggle (mobile) */}
             {setLang && (
-              <div className="flex items-center space-x-0.5 bg-slate-900 border border-slate-800 rounded-lg p-0.5 lg:hidden">
+              <div className="flex items-center space-x-0.5 bg-apricot-100/80 border border-apricot-200 rounded-xl p-0.5 lg:hidden">
                 <button
                   onClick={() => setLang('en')}
-                  className={`px-2 py-1 rounded-md text-[10px] font-bold transition-all ${lang === 'en' ? 'bg-indigo-600 text-white' : 'text-slate-400'}`}
+                  className={`px-2.5 py-1 rounded-lg text-[10px] font-extrabold transition-all ${lang === 'en' ? 'bg-apricot-500 text-white shadow-sm' : 'text-stone-600'}`}
                 >
                   EN
                 </button>
                 <button
                   onClick={() => setLang('hi')}
-                  className={`px-2 py-1 rounded-md text-[10px] font-bold transition-all ${lang === 'hi' ? 'bg-indigo-600 text-white' : 'text-slate-400'}`}
+                  className={`px-2.5 py-1 rounded-lg text-[10px] font-extrabold transition-all ${lang === 'hi' ? 'bg-apricot-500 text-white shadow-sm' : 'text-stone-600'}`}
                 >
                   हिं
                 </button>
               </div>
             )}
 
-            {/* Quick Upload CTA */}
+            {/* Quick Upload CTA - Prominent Golden Apricot Button */}
             <button
               onClick={onOpenUpload}
-              className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/25 transition-all active:scale-95"
+              className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-apricot-500 to-amber-500 hover:from-apricot-600 hover:to-amber-600 text-white shadow-md shadow-apricot-500/25 transition-all active:scale-95"
             >
-              <UploadCloud className="w-3.5 h-3.5" />
+              <UploadCloud className="w-4 h-4" />
               <span className="hidden sm:inline">{t?.common?.uploadReceipt || 'Upload Bill'}</span>
-              <span className="sm:hidden">{lang === 'hi' ? 'बिल' : 'Upload'}</span>
+              <span className="sm:hidden">{lang === 'hi' ? 'बिल जोड़ें' : 'Upload'}</span>
             </button>
 
             {/* CSV Export */}
@@ -149,9 +149,9 @@ export default function Navbar({
               href={getCsvExportUrl('confirmed')}
               download
               title="Export Confirmed Receipts to CSV"
-              className="hidden sm:inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-medium text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800 border border-slate-800 transition-colors"
+              className="hidden sm:inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-stone-700 hover:text-stone-900 bg-apricot-50 hover:bg-apricot-100 border border-apricot-200 transition-colors shadow-sm"
             >
-              <Download className="w-3.5 h-3.5 text-slate-400" />
+              <Download className="w-3.5 h-3.5 text-apricot-600" />
               <span>{t?.common?.exportCsv || 'Export CSV'}</span>
             </a>
 
@@ -160,20 +160,20 @@ export default function Navbar({
               onClick={onResetSeed}
               disabled={isResetting}
               title="Reseed Indian Shopkeeper Demo Data"
-              className="hidden sm:inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-xs font-medium text-slate-300 hover:text-white bg-slate-900 hover:bg-slate-800 border border-slate-800 transition-colors disabled:opacity-50"
+              className="hidden sm:inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-stone-700 hover:text-stone-900 bg-apricot-50 hover:bg-apricot-100 border border-apricot-200 transition-colors disabled:opacity-50 shadow-sm"
             >
-              <RotateCcw className={`w-3.5 h-3.5 text-indigo-400 ${isResetting ? 'animate-spin' : ''}`} />
+              <RotateCcw className={`w-3.5 h-3.5 text-apricot-600 ${isResetting ? 'animate-spin' : ''}`} />
               <span>{isResetting ? (lang === 'hi' ? 'लोड...' : 'Seeding...') : (t?.common?.resetDemo || 'Reset Demo')}</span>
             </button>
 
             {/* AI Status Indicator */}
             <div 
               title={healthData?.gemini_configured ? "Gemini 2.5 Flash Connected" : "Local Analytical Engine Active"}
-              className="flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-xs bg-slate-900 border border-slate-800 text-slate-300"
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs bg-white border border-apricot-200 text-stone-700 shadow-sm"
             >
-              <span className={`w-2 h-2 rounded-full ${healthData?.gemini_configured ? 'bg-emerald-400 glow-emerald' : 'bg-indigo-400 glow-indigo'}`} />
-              <span className="text-[11px] font-mono hidden md:inline">
-                {healthData?.gemini_configured ? 'Gemini 2.5' : 'Engine Ready'}
+              <span className={`w-2.5 h-2.5 rounded-full ${healthData?.gemini_configured ? 'bg-emerald-500 glow-emerald' : 'bg-apricot-500 glow-apricot'}`} />
+              <span className="text-[11px] font-semibold hidden md:inline">
+                {healthData?.gemini_configured ? 'Gemini 2.5 Active' : 'Engine Ready'}
               </span>
             </div>
           </div>
