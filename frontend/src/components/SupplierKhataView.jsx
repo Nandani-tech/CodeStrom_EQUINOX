@@ -201,13 +201,13 @@ export default function SupplierKhataView({ lang = 'en', t, onShowToast }) {
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-black shrink-0 ${
                       dueStatus === 'overdue' ? 'bg-rose-600 text-white' :
                       dueStatus === 'soon' ? 'bg-amber-600 text-white' :
-                      'bg-slate-800 text-slate-300'
+                      'bg-gray-100 text-gray-700'
                     }`}>
                       {sup.name.charAt(0).toUpperCase()}
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center space-x-2 flex-wrap gap-1">
-                        <span className="font-bold text-sm text-white truncate">{sup.name}</span>
+                        <span className="font-bold text-sm text-black truncate">{sup.name}</span>
                         {dueStatus === 'overdue' && (
                           <span className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/15 text-rose-400 border border-rose-500/25">
                             <AlertTriangle className="w-3 h-3" />
@@ -221,14 +221,14 @@ export default function SupplierKhataView({ lang = 'en', t, onShowToast }) {
                           </span>
                         )}
                       </div>
-                      <div className="text-[11px] text-slate-400 mt-0.5 flex items-center space-x-3">
+                      <div className="text-[11px] text-gray-600 mt-0.5 flex items-center space-x-3">
                         {sup.category && <span>{sup.category}</span>}
                         {sup.contact_person && <span>• {sup.contact_person}</span>}
                         {sup.phone && (
                           <a
                             href={`tel:${sup.phone}`}
                             onClick={(e) => e.stopPropagation()}
-                            className="flex items-center space-x-1 text-indigo-400 hover:text-indigo-300"
+                            className="flex items-center space-x-1 text-amber-600 hover:text-amber-700"
                           >
                             <Phone className="w-3 h-3" />
                             <span>{sup.phone}</span>
@@ -240,7 +240,7 @@ export default function SupplierKhataView({ lang = 'en', t, onShowToast }) {
 
                   <div className="flex items-center space-x-4 shrink-0">
                     <div className="text-right hidden sm:block">
-                      <div className="text-xs text-slate-400">{t.suppliers.balanceDue}</div>
+                      <div className="text-xs text-gray-600">{t.suppliers.balanceDue}</div>
                       <div className={`text-sm font-black ${(sup.balance_due || 0) > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
                         ₹{(sup.balance_due || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                       </div>
@@ -266,31 +266,31 @@ export default function SupplierKhataView({ lang = 'en', t, onShowToast }) {
 
                 {/* Expanded Details */}
                 {isExpanded && (
-                  <div className="px-4 pb-4 border-t border-slate-800/60 pt-4">
+                  <div className="px-4 pb-4 border-t border-gray-200 pt-4">
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
-                      <div className="bg-slate-900 rounded-xl p-3">
-                        <span className="text-slate-400 block mb-1">{t.suppliers.totalPurchased}</span>
-                        <span className="font-black text-white">₹{(sup.total_purchased || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                      <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
+                        <span className="text-black font-medium block mb-1">{t.suppliers.totalPurchased}</span>
+                        <span className="font-black text-black">₹{(sup.total_purchased || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                       </div>
-                      <div className="bg-slate-900 rounded-xl p-3">
-                        <span className="text-slate-400 block mb-1">{t.suppliers.totalPaid}</span>
-                        <span className="font-black text-emerald-400">₹{(sup.total_paid || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                      <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
+                        <span className="text-black font-medium block mb-1">{t.suppliers.totalPaid}</span>
+                        <span className="font-black text-emerald-600">₹{(sup.total_paid || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
                       </div>
-                      <div className="bg-slate-900 rounded-xl p-3">
-                        <span className="text-slate-400 block mb-1">{t.suppliers.balanceDue}</span>
-                        <span className={`font-black ${(sup.balance_due || 0) > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
+                      <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
+                        <span className="text-black font-medium block mb-1">{t.suppliers.balanceDue}</span>
+                        <span className={`font-black ${(sup.balance_due || 0) > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
                           ₹{(sup.balance_due || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                         </span>
                       </div>
-                      <div className="bg-slate-900 rounded-xl p-3">
-                        <span className="text-slate-400 block mb-1">{t.suppliers.nextDueDate}</span>
-                        <span className={`font-bold ${dueStatus === 'overdue' ? 'text-rose-400' : dueStatus === 'soon' ? 'text-amber-400' : 'text-slate-300'}`}>
+                      <div className="bg-gray-50 rounded-xl p-3 border border-gray-200">
+                        <span className="text-black font-medium block mb-1">{t.suppliers.nextDueDate}</span>
+                        <span className={`font-bold ${dueStatus === 'overdue' ? 'text-rose-600' : dueStatus === 'soon' ? 'text-amber-600' : 'text-black'}`}>
                           {sup.next_due_date ? new Date(sup.next_due_date).toLocaleDateString('en-IN') : '—'}
                         </span>
                       </div>
                     </div>
                     {sup.notes && (
-                      <p className="mt-3 text-[11px] text-slate-400 bg-slate-900/60 rounded-xl px-3 py-2">{sup.notes}</p>
+                      <p className="mt-3 text-[11px] text-black bg-gray-100 rounded-xl px-3 py-2">{sup.notes}</p>
                     )}
                   </div>
                 )}

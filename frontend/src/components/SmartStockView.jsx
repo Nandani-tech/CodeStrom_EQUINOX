@@ -203,9 +203,9 @@ export default function SmartStockView({ lang = 'en', t, onShowToast }) {
           </span>
         </div>
         <div className="glass-card p-5 rounded-2xl">
-          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">{t.stock.trackedItems}</span>
-          <p className="text-2xl font-black text-white mt-1.5">{inventory.length}</p>
-          <span className="text-[10px] text-slate-400 mt-1 block">{lang === 'hi' ? 'कुल ट्रैक किए गए' : 'total tracked'}</span>
+          <span className="text-[11px] font-bold text-black uppercase tracking-wider block">{t.stock.trackedItems}</span>
+          <p className="text-2xl font-black text-black mt-1.5">{inventory.length}</p>
+          <span className="text-[10px] text-gray-600 mt-1 block">{lang === 'hi' ? 'कुल ट्रैक किए गए' : 'total tracked'}</span>
         </div>
         <div className="glass-card p-5 rounded-2xl">
           <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">{t.stock.totalAssetValue}</span>
@@ -216,13 +216,13 @@ export default function SmartStockView({ lang = 'en', t, onShowToast }) {
 
       {/* Low Stock Banner */}
       {lowStockItems.length > 0 && (
-        <div className="flex items-center space-x-3 p-3 rounded-xl bg-rose-950/30 border border-rose-500/30">
-          <AlertTriangle className="w-5 h-5 text-rose-400 shrink-0" />
+        <div className="flex items-center space-x-3 p-3 rounded-xl bg-rose-50 border border-rose-300">
+          <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />
           <div className="flex-1 min-w-0">
-            <span className="text-xs font-bold text-rose-300">
+            <span className="text-xs font-bold text-black">
               {lang === 'hi' ? `${lowStockItems.length} सामान खत्म होने वाले हैं:` : `${lowStockItems.length} items are running low:`}
             </span>
-            <span className="text-xs text-rose-400/80 ml-2">
+            <span className="text-xs text-black ml-2 font-medium">
               {lowStockItems.slice(0, 4).map(i => i.name).join(', ')}{lowStockItems.length > 4 ? '...' : ''}
             </span>
           </div>
@@ -248,40 +248,40 @@ export default function SmartStockView({ lang = 'en', t, onShowToast }) {
           )}
         </div>
       ) : (
-        <div className="glass-panel rounded-2xl border border-slate-800 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
-              <thead className="text-[10px] uppercase text-slate-400 border-b border-slate-800 bg-slate-900/60">
+              <thead className="text-[10px] uppercase text-black border-b border-gray-200 bg-gray-50">
                 <tr>
-                  <th className="px-4 py-3 text-left font-semibold">{t.stock.itemName}</th>
-                  <th className="px-4 py-3 text-left font-semibold">{t.stock.category}</th>
-                  <th className="px-4 py-3 text-right font-semibold">{t.stock.currentStock}</th>
-                  <th className="px-4 py-3 text-right font-semibold">{t.stock.costPrice}</th>
-                  <th className="px-4 py-3 text-right font-semibold">{t.stock.estMargin}</th>
-                  <th className="px-4 py-3 text-center font-semibold">{t.stock.status}</th>
-                  <th className="px-4 py-3 text-right font-semibold"></th>
+                  <th className="px-4 py-3 text-left font-bold">{t.stock.itemName}</th>
+                  <th className="px-4 py-3 text-left font-bold">{t.stock.category}</th>
+                  <th className="px-4 py-3 text-right font-bold">{t.stock.currentStock}</th>
+                  <th className="px-4 py-3 text-right font-bold">{t.stock.costPrice}</th>
+                  <th className="px-4 py-3 text-right font-bold">{t.stock.estMargin}</th>
+                  <th className="px-4 py-3 text-center font-bold">{t.stock.status}</th>
+                  <th className="px-4 py-3 text-right font-bold"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-gray-100">
                 {displayed.map((item) => {
                   const margin = item.selling_price && item.cost_price
                     ? (((item.selling_price - item.cost_price) / item.selling_price) * 100).toFixed(1)
                     : null;
 
                   return (
-                    <tr key={item.id} className="hover:bg-slate-900/50 transition-colors">
+                    <tr key={item.id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-4 py-3">
-                        <div className="font-semibold text-white">{item.name}</div>
-                        {item.name_hindi && <div className="text-[11px] text-slate-400">{item.name_hindi}</div>}
+                        <div className="font-semibold text-black">{item.name}</div>
+                        {item.name_hindi && <div className="text-[11px] text-gray-500">{item.name_hindi}</div>}
                       </td>
-                      <td className="px-4 py-3 text-slate-400">{item.category || '—'}</td>
+                      <td className="px-4 py-3 text-black font-medium">{item.category || '—'}</td>
                       <td className="px-4 py-3 text-right">
-                        <span className={`font-bold ${item.is_low_stock ? 'text-rose-400' : 'text-white'}`}>
+                        <span className={`font-bold ${item.is_low_stock ? 'text-rose-600' : 'text-black'}`}>
                           {item.current_stock ?? '—'}
                         </span>
-                        <span className="text-slate-500 ml-1">{item.unit}</span>
+                        <span className="text-gray-500 ml-1">{item.unit}</span>
                       </td>
-                      <td className="px-4 py-3 text-right text-slate-300">
+                      <td className="px-4 py-3 text-right text-black font-medium">
                         {item.cost_price ? `₹${Number(item.cost_price).toFixed(2)}` : '—'}
                       </td>
                       <td className="px-4 py-3 text-right">

@@ -25,6 +25,13 @@ export async function fetchDailyHisab(dateStr = null) {
   return res.json();
 }
 
+export async function fetchSales(startDate, endDate) {
+  const query = new URLSearchParams({ start_date: startDate, end_date: endDate });
+  const res = await fetch(`${API_BASE}/hisab/sales?${query.toString()}`);
+  if (!res.ok) throw new Error('Failed to fetch sales');
+  return res.json();
+}
+
 export async function recordSale(saleData) {
   const res = await fetch(`${API_BASE}/hisab/sales`, {
     method: 'POST',
@@ -282,6 +289,8 @@ export async function fetchReceipts(params = {}) {
   if (params.status && params.status !== 'all') query.set('status', params.status);
   if (params.category && params.category !== 'all') query.set('category', params.category);
   if (params.search) query.set('search', params.search);
+  if (params.start_date) query.set('start_date', params.start_date);
+  if (params.end_date) query.set('end_date', params.end_date);
   if (params.sort_by) query.set('sort_by', params.sort_by);
   if (params.sort_order) query.set('sort_order', params.sort_order);
 

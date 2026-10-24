@@ -222,18 +222,18 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
   };
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto animate-in fade-in duration-300">
+    <div className="space-y-8 max-w-5xl mx-auto animate-in fade-in duration-300 text-black">
       
       {/* Header */}
       <div className="text-center max-w-2xl mx-auto">
-        <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 mb-3">
+        <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-black border border-indigo-200 mb-3">
           <Sparkles className="w-3.5 h-3.5" />
           <span>Multimodal OCR & AI Financial Extraction</span>
         </div>
-        <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-black tracking-tight">
           Upload Receipt & Invoice Documents
         </h2>
-        <p className="text-sm text-slate-400 mt-2">
+        <p className="text-sm text-black mt-2">
           Drop any receipt image or PDF. Gemini extracts line items, validates totals, detects duplicates, and flags uncertain fields.
         </p>
       </div>
@@ -250,7 +250,7 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
             className={`relative p-10 sm:p-14 border-2 border-dashed rounded-3xl text-center cursor-pointer transition-all ${
               dragActive 
                 ? 'border-indigo-400 bg-indigo-500/10 scale-[1.01]' 
-                : 'border-slate-800 hover:border-indigo-500/50 bg-slate-900/40 hover:bg-slate-900/70'
+                : 'border-gray-300 hover:border-indigo-400 bg-white hover:bg-indigo-50'
             }`}
           >
             <input
@@ -268,8 +268,8 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
                   <Sparkles className="w-6 h-6 text-indigo-400 absolute inset-0 m-auto animate-pulse" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-white">Extracting Financial Data</h3>
-                  <p className="text-xs text-indigo-400 font-mono mt-1 animate-pulse">{uploadStep}</p>
+                  <h3 className="text-base font-bold text-black">Extracting Financial Data</h3>
+                  <p className="text-xs text-black font-mono mt-1 animate-pulse">{uploadStep}</p>
                 </div>
               </div>
             ) : (
@@ -278,16 +278,16 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
                   <UploadCloud className="w-10 h-10" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-white">
+                  <h3 className="text-base font-bold text-black">
                     Click to browse or drag and drop receipt file
                   </h3>
-                  <p className="text-xs text-slate-400 mt-1">
+                  <p className="text-xs text-black mt-1">
                     Supports PNG, JPG, JPEG, WEBP, and PDF receipts & invoices
                   </p>
                 </div>
                 <button
                   type="button"
-                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-md shadow-indigo-600/20"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-100 hover:bg-indigo-200 text-black transition-all shadow-md shadow-indigo-600/10"
                 >
                   Select File from Computer
                 </button>
@@ -297,13 +297,13 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
 
           {/* Quick-Test with Demo Receipts Bar */}
           {samples.length > 0 && (
-            <div className="glass-panel p-5 rounded-2xl border border-slate-800">
+            <div className="glass-panel p-5 rounded-2xl border border-gray-200">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-semibold text-slate-300 flex items-center space-x-1.5">
+                <span className="text-xs font-semibold text-black flex items-center space-x-1.5">
                   <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
                   <span>1-Click Hackathon Demo Receipts (No Local File Needed)</span>
                 </span>
-                <span className="text-[11px] text-slate-400">Click any pill to test OCR</span>
+                <span className="text-[11px] text-black">Click any pill to test OCR</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {samples.slice(0, 8).map((sample) => (
@@ -311,7 +311,7 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
                     key={sample.filename}
                     onClick={() => handleSampleClick(sample)}
                     disabled={isUploading}
-                    className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-900 hover:bg-indigo-600/20 text-slate-300 hover:text-indigo-300 border border-slate-800 hover:border-indigo-500/30 transition-all active:scale-95 disabled:opacity-50"
+                    className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-white hover:bg-indigo-50 text-black border border-gray-200 hover:border-indigo-300 transition-all active:scale-95 disabled:opacity-50"
                   >
                     {sample.filename.endsWith('.pdf') ? (
                       <FileText className="w-3.5 h-3.5 text-rose-400" />
@@ -329,18 +329,18 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
 
       {/* Editable Review Form after Upload */}
       {formData && extractedReceipt && (
-        <div className="glass-panel rounded-3xl border border-slate-800 overflow-hidden shadow-2xl animate-in slide-in-from-bottom-5 duration-300">
+        <div className="glass-panel rounded-3xl border border-gray-200 overflow-hidden shadow-2xl animate-in slide-in-from-bottom-5 duration-300">
           
           {/* Form Header */}
-          <div className="p-6 border-b border-slate-800 bg-slate-900/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="p-6 border-b border-gray-200 bg-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <div className="flex items-center space-x-2">
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-indigo-50 text-black border border-indigo-200">
                   Receipt #{extractedReceipt.id}
                 </span>
-                <h3 className="text-lg font-bold text-white">Editable Financial Review Form</h3>
+                <h3 className="text-lg font-bold text-black">Editable Financial Review Form</h3>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-black mt-0.5">
                 Verify extracted values, resolve any flagged fields, and confirm into ledger.
               </p>
             </div>
@@ -349,7 +349,7 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
               <button
                 type="button"
                 onClick={() => { setFormData(null); setExtractedReceipt(null); }}
-                className="px-3 py-1.5 rounded-xl text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+                className="px-3 py-1.5 rounded-xl text-xs font-medium bg-gray-100 hover:bg-gray-200 text-black transition-colors"
               >
                 Upload Another
               </button>
@@ -360,12 +360,12 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
             
             {/* Duplicate Flag Alert Banner if matched */}
             {duplicateWarning && duplicateWarning.is_duplicate && (
-              <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 space-y-2">
+              <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-black space-y-2">
                 <div className="flex items-center space-x-2 font-semibold text-sm">
                   <ShieldAlert className="w-5 h-5 text-rose-400" />
                   <span>Possible Duplicate Receipt Detected!</span>
                 </div>
-                <div className="text-xs space-y-1 pl-7 text-rose-200/90">
+                <div className="text-xs space-y-1 pl-7 text-black">
                   {duplicateWarning.matches.map((m, idx) => (
                     <p key={idx}>
                       • Matched <strong>Receipt #{m.receipt_id}</strong> ({m.vendor} on {m.date} for ${m.total.toFixed(2)}): <em>{m.reason}</em>
@@ -377,16 +377,16 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
 
             {/* Uncertain Fields Alert */}
             {formData.uncertain_fields && formData.uncertain_fields.length > 0 && (
-              <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 flex items-start space-x-3">
+              <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-black flex items-start space-x-3">
                 <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
                 <div className="text-xs">
-                  <p className="font-semibold text-sm text-amber-200">
+                  <p className="font-semibold text-sm text-black">
                     Flagged Uncertain or Missing Fields:
                   </p>
-                  <p className="mt-1 text-amber-300/80">
+                  <p className="mt-1 text-black">
                     The AI detected blurry, estimated, or missing fields: {' '}
                     {formData.uncertain_fields.map((f, i) => (
-                      <span key={i} className="inline-block mx-1 px-1.5 py-0.2 rounded bg-amber-500/20 font-mono text-[10px] text-amber-200 border border-amber-500/30">
+                      <span key={i} className="inline-block mx-1 px-1.5 py-0.2 rounded bg-amber-100 font-mono text-[10px] text-black border border-amber-200">
                         {f}
                       </span>
                     ))}
@@ -401,43 +401,43 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
               
               {/* Vendor */}
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Vendor Name <span className="text-rose-400">*</span>
+                <label className="block text-xs font-semibold text-black mb-1.5">
+                Vendor Name <span className="text-black">*</span>
                 </label>
                 <input
                   type="text"
                   value={formData.vendor}
                   onChange={(e) => handleInputChange('vendor', e.target.value)}
-                  className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-slate-900 border text-white outline-none focus:ring-1 focus:ring-indigo-500 ${
-                    formData.uncertain_fields.includes('vendor') ? 'border-amber-500 ring-1 ring-amber-500/40' : 'border-slate-800'
+                  className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border text-black outline-none focus:ring-1 focus:ring-indigo-500 ${
+                    formData.uncertain_fields.includes('vendor') ? 'border-amber-500 ring-1 ring-amber-500/40' : 'border-gray-300'
                   }`}
                 />
               </div>
 
               {/* Date */}
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Transaction Date <span className="text-rose-400">*</span>
+                <label className="block text-xs font-semibold text-black mb-1.5">
+                Transaction Date <span className="text-black">*</span>
                 </label>
                 <input
                   type="date"
                   value={formData.date}
                   onChange={(e) => handleInputChange('date', e.target.value)}
-                  className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-slate-900 border text-white outline-none focus:ring-1 focus:ring-indigo-500 ${
-                    formData.uncertain_fields.includes('date') ? 'border-amber-500 ring-1 ring-amber-500/40' : 'border-slate-800'
+                  className={`w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border text-black outline-none focus:ring-1 focus:ring-indigo-500 ${
+                    formData.uncertain_fields.includes('date') ? 'border-amber-500 ring-1 ring-amber-500/40' : 'border-gray-300'
                   }`}
                 />
               </div>
 
               {/* Category */}
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-black mb-1.5">
                   Expense Category
                 </label>
                 <select
                   value={formData.category}
                   onChange={(e) => handleInputChange('category', e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl text-xs bg-slate-900 border border-slate-800 text-white outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-gray-300 text-black outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
                 >
                   {CATEGORIES.map(cat => (
                     <option key={cat} value={cat}>{cat}</option>
@@ -447,18 +447,18 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
 
               {/* Total */}
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
-                  Total Amount (USD) <span className="text-rose-400">*</span>
+                <label className="block text-xs font-semibold text-black mb-1.5">
+                Total Amount (USD) <span className="text-black">*</span>
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-2.5 text-xs text-slate-400">$</span>
+                  <span className="absolute left-3.5 top-2.5 text-xs text-black">$</span>
                   <input
                     type="number"
                     step="0.01"
                     value={formData.total}
                     onChange={(e) => handleInputChange('total', e.target.value)}
-                    className={`w-full pl-8 pr-3.5 py-2.5 rounded-xl text-xs bg-slate-900 border font-bold text-white outline-none focus:ring-1 focus:ring-indigo-500 ${
-                      formData.uncertain_fields.includes('total') ? 'border-amber-500 ring-1 ring-amber-500/40' : 'border-slate-800'
+                    className={`w-full pl-8 pr-3.5 py-2.5 rounded-xl text-xs bg-white border font-bold text-black outline-none focus:ring-1 focus:ring-indigo-500 ${
+                      formData.uncertain_fields.includes('total') ? 'border-amber-500 ring-1 ring-amber-500/40' : 'border-gray-300'
                     }`}
                   />
                 </div>
@@ -466,36 +466,36 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
 
               {/* Subtotal */}
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-black mb-1.5">
                   Subtotal
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-2.5 text-xs text-slate-400">$</span>
+                  <span className="absolute left-3.5 top-2.5 text-xs text-black">$</span>
                   <input
                     type="number"
                     step="0.01"
                     value={formData.subtotal}
                     onChange={(e) => handleInputChange('subtotal', e.target.value)}
                     placeholder="Auto or optional"
-                    className="w-full pl-8 pr-3.5 py-2.5 rounded-xl text-xs bg-slate-900 border border-slate-800 text-white outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="w-full pl-8 pr-3.5 py-2.5 rounded-xl text-xs bg-white border border-gray-300 text-black outline-none focus:ring-1 focus:ring-indigo-500"
                   />
                 </div>
               </div>
 
               {/* Tax */}
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-black mb-1.5">
                   Sales Tax
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-2.5 text-xs text-slate-400">$</span>
+                  <span className="absolute left-3.5 top-2.5 text-xs text-black">$</span>
                   <input
                     type="number"
                     step="0.01"
                     value={formData.tax}
                     onChange={(e) => handleInputChange('tax', e.target.value)}
-                    className={`w-full pl-8 pr-3.5 py-2.5 rounded-xl text-xs bg-slate-900 border text-white outline-none focus:ring-1 focus:ring-indigo-500 ${
-                      formData.uncertain_fields.includes('tax') ? 'border-amber-500 ring-1 ring-amber-500/40' : 'border-slate-800'
+                    className={`w-full pl-8 pr-3.5 py-2.5 rounded-xl text-xs bg-white border text-black outline-none focus:ring-1 focus:ring-indigo-500 ${
+                      formData.uncertain_fields.includes('tax') ? 'border-amber-500 ring-1 ring-amber-500/40' : 'border-gray-300'
                     }`}
                   />
                 </div>
@@ -503,24 +503,24 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
 
               {/* Tip */}
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-black mb-1.5">
                   Tip / Gratuity
                 </label>
                 <div className="relative">
-                  <span className="absolute left-3.5 top-2.5 text-xs text-slate-400">$</span>
+                  <span className="absolute left-3.5 top-2.5 text-xs text-black">$</span>
                   <input
                     type="number"
                     step="0.01"
                     value={formData.tip}
                     onChange={(e) => handleInputChange('tip', e.target.value)}
-                    className="w-full pl-8 pr-3.5 py-2.5 rounded-xl text-xs bg-slate-900 border border-slate-800 text-white outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="w-full pl-8 pr-3.5 py-2.5 rounded-xl text-xs bg-white border border-gray-300 text-black outline-none focus:ring-1 focus:ring-indigo-500"
                   />
                 </div>
               </div>
 
               {/* Payment Method */}
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-black mb-1.5">
                   Payment Method
                 </label>
                 <input
@@ -528,13 +528,13 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
                   value={formData.payment_method}
                   onChange={(e) => handleInputChange('payment_method', e.target.value)}
                   placeholder="e.g. Visa (...1234)"
-                  className="w-full px-3.5 py-2.5 rounded-xl text-xs bg-slate-900 border border-slate-800 text-white outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-gray-300 text-black outline-none focus:ring-1 focus:ring-indigo-500"
                 />
               </div>
 
               {/* Invoice Number */}
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-black mb-1.5">
                   Invoice / Ref Number
                 </label>
                 <input
@@ -542,19 +542,19 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
                   value={formData.invoice_number}
                   onChange={(e) => handleInputChange('invoice_number', e.target.value)}
                   placeholder="e.g. INV-2026-001"
-                  className="w-full px-3.5 py-2.5 rounded-xl text-xs bg-slate-900 border border-slate-800 text-white outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-gray-300 text-black outline-none focus:ring-1 focus:ring-indigo-500"
                 />
               </div>
 
               {/* Status */}
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-black mb-1.5">
                   Review Status
                 </label>
                 <select
                   value={formData.status}
                   onChange={(e) => handleInputChange('status', e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl text-xs bg-slate-900 border border-slate-800 text-white outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-gray-300 text-black outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
                 >
                   <option value="pending_review">Pending Review</option>
                   <option value="confirmed">Confirmed (Approved)</option>
@@ -564,7 +564,7 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
 
               {/* Notes */}
               <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-black mb-1.5">
                   Business Purpose / Notes
                 </label>
                 <input
@@ -572,21 +572,21 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
                   value={formData.notes}
                   onChange={(e) => handleInputChange('notes', e.target.value)}
                   placeholder="Reason for expense or project allocation"
-                  className="w-full px-3.5 py-2.5 rounded-xl text-xs bg-slate-900 border border-slate-800 text-white outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-xs bg-white border border-gray-300 text-black outline-none focus:ring-1 focus:ring-indigo-500"
                 />
               </div>
 
             </div>
 
             {/* Line Items Editor Section */}
-            <div className="pt-4 border-t border-slate-800">
+            <div className="pt-4 border-t border-gray-200">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm font-semibold text-white">Itemized Line Items</h4>
+                <h4 className="text-sm font-semibold text-black">Itemized Line Items</h4>
                 <div className="flex items-center space-x-2">
                   <button
                     type="button"
                     onClick={handleRecalculateTotal}
-                    className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-indigo-400 transition-colors"
+                    className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-indigo-50 hover:bg-indigo-100 text-black transition-colors"
                   >
                     <RefreshCw className="w-3 h-3" />
                     <span>Recalculate Total</span>
@@ -594,7 +594,7 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
                   <button
                     type="button"
                     onClick={handleAddItem}
-                    className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-indigo-600 hover:bg-indigo-500 text-white transition-colors"
+                    className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-medium bg-indigo-100 hover:bg-indigo-200 text-black transition-colors"
                   >
                     <Plus className="w-3 h-3" />
                     <span>Add Item</span>
@@ -604,13 +604,13 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
 
               <div className="space-y-2">
                 {items.map((item, idx) => (
-                  <div key={idx} className="flex items-center space-x-2 bg-slate-900/80 p-2 rounded-xl border border-slate-800">
+                  <div key={idx} className="flex items-center space-x-2 bg-gray-50 p-2 rounded-xl border border-gray-200">
                     <input
                       type="text"
                       value={item.description}
                       onChange={(e) => handleItemChange(idx, 'description', e.target.value)}
                       placeholder="Item description"
-                      className="flex-1 px-2.5 py-1.5 rounded-lg text-xs bg-slate-800 border border-slate-700 text-white outline-none"
+                      className="flex-1 px-2.5 py-1.5 rounded-lg text-xs bg-white border border-gray-300 text-black outline-none"
                     />
                     <div className="w-20">
                       <input
@@ -620,7 +620,7 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
                         value={item.quantity}
                         onChange={(e) => handleItemChange(idx, 'quantity', e.target.value)}
                         placeholder="Qty"
-                        className="w-full px-2 py-1.5 rounded-lg text-xs bg-slate-800 border border-slate-700 text-white text-center outline-none"
+                        className="w-full px-2 py-1.5 rounded-lg text-xs bg-white border border-gray-300 text-black text-center outline-none"
                       />
                     </div>
                     <div className="w-24">
@@ -630,17 +630,17 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
                         value={item.unit_price}
                         onChange={(e) => handleItemChange(idx, 'unit_price', e.target.value)}
                         placeholder="Price"
-                        className="w-full px-2 py-1.5 rounded-lg text-xs bg-slate-800 border border-slate-700 text-white text-right outline-none"
+                        className="w-full px-2 py-1.5 rounded-lg text-xs bg-white border border-gray-300 text-black text-right outline-none"
                       />
                     </div>
-                    <div className="w-24 text-right pr-2 font-semibold text-white text-xs">
+                    <div className="w-24 text-right pr-2 font-semibold text-black text-xs">
                       ${Number(item.total_price || 0).toFixed(2)}
                     </div>
                     <button
                       type="button"
                       onClick={() => handleRemoveItem(idx)}
                       disabled={items.length <= 1}
-                      className="p-1.5 text-slate-500 hover:text-rose-400 disabled:opacity-20 transition-colors"
+                      className="p-1.5 text-black hover:text-black disabled:opacity-20 transition-colors"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -651,8 +651,8 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
 
             {/* Document Preview Link */}
             {extractedReceipt.file_name && (
-              <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center justify-between text-xs">
-                <div className="flex items-center space-x-2 text-slate-300">
+              <div className="p-3 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-between text-xs">
+                <div className="flex items-center space-x-2 text-black">
                   <FileText className="w-4 h-4 text-indigo-400" />
                   <span>Document: {extractedReceipt.file_name}</span>
                 </div>
@@ -660,7 +660,7 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
                   href={`/uploads/${extractedReceipt.file_name}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center space-x-1 text-indigo-400 hover:text-indigo-300 underline"
+                  className="inline-flex items-center space-x-1 text-black hover:text-black underline"
                 >
                   <span>Open Document Preview</span>
                   <ExternalLink className="w-3 h-3" />
@@ -669,12 +669,12 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
             )}
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-4 border-t border-slate-800">
+            <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-4 border-t border-gray-200">
               <button
                 type="button"
                 onClick={() => handleSaveReview(false)}
                 disabled={isSaving}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-white transition-all disabled:opacity-50"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-semibold bg-gray-100 hover:bg-gray-200 text-black transition-all disabled:opacity-50"
               >
                 Save Changes (Keep Pending)
               </button>
@@ -683,7 +683,7 @@ export default function UploadView({ onReceiptSaved, onShowToast }) {
                 type="button"
                 onClick={() => handleSaveReview(true)}
                 disabled={isSaving}
-                className="w-full sm:w-auto inline-flex items-center justify-center space-x-1.5 px-6 py-2.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white transition-all shadow-lg shadow-emerald-600/25 active:scale-95 disabled:opacity-50"
+                className="w-full sm:w-auto inline-flex items-center justify-center space-x-1.5 px-6 py-2.5 rounded-xl text-xs font-semibold bg-emerald-100 hover:bg-emerald-200 text-black transition-all shadow-lg shadow-emerald-600/10 active:scale-95 disabled:opacity-50"
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Confirm & Add to Ledger</span>

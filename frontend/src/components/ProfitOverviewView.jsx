@@ -36,14 +36,14 @@ function MetricCard({ label, value, icon: Icon, color, sub, highlight }) {
 
 function IntegrityRow({ label, status, detail }) {
   return (
-    <div className="flex items-start justify-between py-2.5 border-b border-slate-800/50 last:border-0">
-      <span className="text-xs text-slate-300">{label}</span>
+    <div className="flex items-start justify-between py-2.5 border-b border-gray-200 last:border-0">
+      <span className="text-xs text-black font-medium">{label}</span>
       <div className="flex items-center space-x-2 text-right">
-        {status === 'ok' && <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />}
-        {status === 'warn' && <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />}
-        {status === 'missing' && <XCircle className="w-4 h-4 text-rose-400 shrink-0" />}
-        {status === 'neutral' && <Minus className="w-4 h-4 text-slate-500 shrink-0" />}
-        <span className={`text-xs font-semibold ${status === 'ok' ? 'text-emerald-400' : status === 'warn' ? 'text-amber-400' : status === 'missing' ? 'text-rose-400' : 'text-slate-500'}`}>
+        {status === 'ok' && <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />}
+        {status === 'warn' && <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />}
+        {status === 'missing' && <XCircle className="w-4 h-4 text-rose-600 shrink-0" />}
+        {status === 'neutral' && <Minus className="w-4 h-4 text-gray-400 shrink-0" />}
+        <span className={`text-xs font-bold ${status === 'ok' ? 'text-emerald-700' : status === 'warn' ? 'text-amber-700' : status === 'missing' ? 'text-rose-700' : 'text-gray-500'}`}>
           {detail}
         </span>
       </div>
@@ -215,9 +215,9 @@ export default function ProfitOverviewView({ lang = 'en', t, onShowToast }) {
 
       {/* Visual Breakdown Bar */}
       {sales > 0 && (
-        <div className="glass-panel p-5 rounded-2xl border border-slate-800 space-y-3">
-          <h3 className="text-sm font-bold text-white">{lang === 'hi' ? 'खर्चों का हिस्सा (बिक्री का प्रतिशत)' : 'Revenue Breakdown (% of Sales)'}</h3>
-          <div className="w-full h-5 rounded-full overflow-hidden bg-slate-900 flex">
+        <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm space-y-3">
+          <h3 className="text-sm font-bold text-black">{lang === 'hi' ? 'खर्चों का हिस्सा (बिक्री का प्रतिशत)' : 'Revenue Breakdown (% of Sales)'}</h3>
+          <div className="w-full h-5 rounded-full overflow-hidden bg-gray-200 flex">
             {cogs > 0 && (
               <div
                 style={{ width: `${Math.min((cogs / sales) * 100, 100)}%` }}
@@ -241,25 +241,25 @@ export default function ProfitOverviewView({ lang = 'en', t, onShowToast }) {
           <div className="flex items-center flex-wrap gap-4 text-xs">
             <div className="flex items-center space-x-1.5">
               <span className="w-3 h-3 rounded-sm bg-amber-500/70 inline-block" />
-              <span className="text-slate-300">COGS: {pct(sales > 0 ? (cogs / sales) * 100 : 0)}</span>
+              <span className="text-black font-medium">COGS: {pct(sales > 0 ? (cogs / sales) * 100 : 0)}</span>
             </div>
             <div className="flex items-center space-x-1.5">
               <span className="w-3 h-3 rounded-sm bg-rose-500/70 inline-block" />
-              <span className="text-slate-300">OpEx: {pct(sales > 0 ? (opex / sales) * 100 : 0)}</span>
+              <span className="text-black font-medium">OpEx: {pct(sales > 0 ? (opex / sales) * 100 : 0)}</span>
             </div>
             <div className="flex items-center space-x-1.5">
               <span className="w-3 h-3 rounded-sm bg-emerald-500/40 inline-block" />
-              <span className="text-slate-300">{lang === 'hi' ? 'मुनाफा' : 'Net Profit'}: {pct(net_margin)}</span>
+              <span className="text-black font-medium">{lang === 'hi' ? 'मुनाफा' : 'Net Profit'}: {pct(net_margin)}</span>
             </div>
           </div>
         </div>
       )}
 
       {/* Data Integrity Panel */}
-      <div className="glass-panel p-5 rounded-2xl border border-slate-800">
+      <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
         <div className="flex items-center space-x-2 mb-4">
-          <ShieldCheck className="w-5 h-5 text-indigo-400" />
-          <h3 className="text-sm font-bold text-white">{t.profit.integrityTitle}</h3>
+          <ShieldCheck className="w-5 h-5 text-amber-600" />
+          <h3 className="text-sm font-bold text-black">{t.profit.integrityTitle}</h3>
         </div>
         <div className="space-y-0">
           <IntegrityRow
@@ -293,9 +293,9 @@ export default function ProfitOverviewView({ lang = 'en', t, onShowToast }) {
             />
           ))}
         </div>
-        <div className="mt-4 flex items-start space-x-2 p-3 rounded-xl bg-indigo-950/30 border border-indigo-500/20">
-          <Info className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
-          <p className="text-[11px] text-indigo-300">{t.profit.verifiedRecords}</p>
+        <div className="mt-4 flex items-start space-x-2 p-3 rounded-xl bg-amber-50 border border-amber-200">
+          <Info className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+          <p className="text-[11px] text-black font-medium">{t.profit.verifiedRecords}</p>
         </div>
       </div>
 

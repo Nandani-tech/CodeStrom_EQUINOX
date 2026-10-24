@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Sidebar from './components/Sidebar';
 import Navbar from './components/Navbar';
 import DashboardView from './components/DashboardView';
@@ -43,6 +43,7 @@ export default function App() {
   // Modals state
   const [detailReceiptId, setDetailReceiptId] = useState(null);
   const [editReceipt, setEditReceipt] = useState(null);
+  const latestLoadRequest = useRef(0);
 
   const showToast = useCallback((toast) => {
     setToast(toast);
@@ -50,20 +51,27 @@ export default function App() {
 
   // Load all app data
   const loadData = useCallback(async () => {
+    const requestId = ++latestLoadRequest.current;
     try {
       const [analyticsRes, receiptsRes, healthRes] = await Promise.all([
         fetchAnalytics(),
         fetchReceipts({ sort_by: 'date', sort_order: 'desc' }),
         fetchHealth().catch(() => ({ status: 'offline', gemini_configured: false }))
       ]);
+      if (requestId !== latestLoadRequest.current) return false;
+
       setAnalytics(analyticsRes);
       setReceipts(receiptsRes.receipts || []);
       setHealthData(healthRes);
-      setIsLoading(false);
+      return true;
     } catch (err) {
-      console.error('Failed to load ShopLedger data:', err);
-      setIsLoading(false);
-      showToast({ type: 'error', message: 'Failed to connect to backend server. Ensure backend is running on port 5002.' });
+      if (requestId === latestLoadRequest.current) {
+        console.error('Failed to load ShopLedger data:', err);
+        showToast({ type: 'error', message: 'Failed to connect to backend server. Ensure backend is running on port 5002.' });
+      }
+      return false;
+    } finally {
+      if (requestId === latestLoadRequest.current) setIsLoading(false);
     }
   }, [showToast]);
 
@@ -99,12 +107,13 @@ export default function App() {
     setIsResetting(true);
     try {
       const res = await resetDemoData();
+      const dataReloaded = await loadData();
+      if (!dataReloaded) return;
       showToast({ type: 'success', message: res.message || 'Demo data successfully reset!' });
-      await loadData();
-      setIsResetting(false);
     } catch (err) {
-      setIsResetting(false);
       showToast({ type: 'error', message: err.message || 'Failed to reset demo data' });
+    } finally {
+      setIsResetting(false);
     }
   };
 
@@ -199,6 +208,7 @@ export default function App() {
                   onSelectReceipt={(r) => setDetailReceiptId(r.id)}
                   onNavigateTab={handleNavigateTab}
                   onOpenUpload={() => handleNavigateTab('upload')}
+                  onShowToast={showToast}
                 />
               )}
 
