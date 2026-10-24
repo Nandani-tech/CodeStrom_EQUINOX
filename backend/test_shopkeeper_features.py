@@ -175,3 +175,78 @@ def test_assistant_stock_query(client):
     data = res.get_json()
     assert "answer" in data
     assert any(w in data["answer"] for w in ["स्टॉक", "Stock", "चीनी", "Sugar", "तेल", "Oil"])
+
+# 7. CUSTOMER KHATA (ग्राहक बहीखाता) & VOICE TESTS
+def test_customer_khata_list_and_balances(client):
+    res = client.get("/api/customers")
+    assert res.status_code == 200
+    data = res.get_json()
+    assert "customers" in data
+    assert "total_receivable" in data
+    assert data["total_receivable"] > 0
+    assert len(data["customers"]) >= 5
+
+    # Check search functionality
+    search_res = client.get("/api/customers?search=Ramesh")
+    assert search_res.status_code == 200
+    s_data = search_res.get_json()
+    assert len(s_data["customers"]) >= 1
+    assert "Ramesh" in s_data["customers"][0]["name"]
+
+def test_customer_transaction_given_and_received(client):
+    # 1. Add new customer
+    add_res = client.post("/api/customers", json={
+        "name": "Kailash General Store Neighbor",
+        "phone": "+91 91234 56789",
+        "opening_balance": 500.0,
+        "opening_type": "given"
+    })
+    assert add_res.status_code == 201
+    cid = add_res.get_json()["customer"]["id"]
+
+    # 2. You gave (सामान दिया / Udhar) ₹300
+    tx1 = client.post(f"/api/customers/{cid}/transactions", json={
+        "amount": 300.0,
+        "type": "given",
+        "notes": "10kg Atta"
+    })
+    assert tx1.status_code == 201
+    c_after_give = tx1.get_json()["customer"]
+    assert c_after_give["balance_due"] == 800.0 # 500 + 300
+
+    # 3. You received (रुपया मिला / Payment) ₹400
+    tx2 = client.post(f"/api/customers/{cid}/transactions", json={
+        "amount": 400.0,
+        "type": "received",
+        "payment_mode": "cash",
+        "notes": "Partial payment"
+    })
+    assert tx2.status_code == 201
+    c_after_recv = tx2.get_json()["customer"]
+    assert c_after_recv["balance_due"] == 400.0 # 800 - 400
+
+    # Cleanup
+    del_res = client.delete(f"/api/customers/{cid}")
+    assert del_res.status_code == 200
+
+def test_voice_khata_speech_parsing(client):
+    # 1. Received test
+    res1 = client.post("/api/voice/parse-khata", json={
+        "speech_text": "Received 500 rupees from Ramesh"
+    })
+    assert res1.status_code == 200
+    d1 = res1.get_json()
+    assert d1["success"] is True
+    assert d1["amount"] == 500.0
+    assert d1["type"] == "received"
+
+    # 2. Hindi Given test
+    res2 = client.post("/api/voice/parse-khata", json={
+        "speech_text": "रमेश को 350 रुपये का सामान उधार दिया"
+    })
+    assert res2.status_code == 200
+    d2 = res2.get_json()
+    assert d2["success"] is True
+    assert d2["amount"] == 350.0
+    assert d2["type"] == "given"
+

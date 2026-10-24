@@ -9,6 +9,7 @@ import DailyHisabView from './components/DailyHisabView';
 import SupplierKhataView from './components/SupplierKhataView';
 import SmartStockView from './components/SmartStockView';
 import ProfitOverviewView from './components/ProfitOverviewView';
+import CustomerKhataView from './components/CustomerKhataView';
 import ReceiptDetailModal from './components/ReceiptDetailModal';
 import ReceiptEditModal from './components/ReceiptEditModal';
 import Toast from './components/Toast';
@@ -24,7 +25,7 @@ import { translations } from './i18n/translations';
 import { Sparkles } from 'lucide-react';
 
 export default function App() {
-  const [currentTab, setCurrentTab] = useState('hisab');
+  const [currentTab, setCurrentTab] = useState('customers');
   const [analytics, setAnalytics] = useState(null);
   const [receipts, setReceipts] = useState([]);
   const [healthData, setHealthData] = useState(null);
@@ -170,6 +171,10 @@ export default function App() {
           ) : (
             <>
               {/* === SHOPKEEPER CORE FEATURES === */}
+              {currentTab === 'customers' && (
+                <CustomerKhataView {...commonViewProps} />
+              )}
+
               {currentTab === 'hisab' && (
                 <DailyHisabView {...commonViewProps} />
               )}

@@ -8,7 +8,9 @@ from database import (
     insert_sale, 
     insert_supplier, 
     insert_supplier_transaction, 
-    insert_inventory_item
+    insert_inventory_item,
+    insert_customer,
+    insert_customer_transaction
 )
 
 DEMO_SUPPLIERS = [
@@ -548,7 +550,92 @@ def seed_indian_shopkeeper_data(db_path=None, uploads_dir=None):
         rec["file_path"] = fp
         insert_receipt(rec, items=items, db_path=db_path)
 
+    # Seed Customer Khata (ग्राहक बहीखाता)
+    demo_customers = [
+        {
+            "name": "Ramesh Kumar (शर्मा जी के पड़ोसी)",
+            "phone": "+91 98765 43210",
+            "address": "Gali No. 3, Near Shiv Mandir",
+            "notes": "Regular monthly family account, pays on 1st of month",
+            "credit_limit": 5000.0,
+            "opening_balance": 1850.0,
+            "opening_type": "given",
+            "opening_notes": "Previous month balance (पुराना उधार)"
+        },
+        {
+            "name": "Verma Master Ji (शिक्षक)",
+            "phone": "+91 98111 22334",
+            "address": "B-42, Adarsh Nagar",
+            "notes": "Govt school teacher, weekly ration khata",
+            "credit_limit": 8000.0,
+            "opening_balance": 2100.0,
+            "opening_type": "given",
+            "opening_notes": "Rice 25kg + Mustard Oil 5L"
+        },
+        {
+            "name": "Sunita Bhabhi",
+            "phone": "+91 97234 56789",
+            "address": "Quarter 12, Railway Colony",
+            "notes": "Daily milk and bread, clears via UPI on weekends",
+            "credit_limit": 3000.0,
+            "opening_balance": 620.0,
+            "opening_type": "given",
+            "opening_notes": "Spices + Pulses"
+        },
+        {
+            "name": "Gupta Contractor",
+            "phone": "+91 94567 89012",
+            "address": "Site Office, Main Road",
+            "notes": "Bulk worker tea, sugar and snacks account",
+            "credit_limit": 10000.0,
+            "opening_balance": 3450.0,
+            "opening_type": "given",
+            "opening_notes": "Tea, biscuits and cold drinks for laborers"
+        },
+        {
+            "name": "Amit Saxena (Advance Paid)",
+            "phone": "+91 99887 76655",
+            "address": "Flat 204, Surya Apartments",
+            "notes": "Prepaid advance customer",
+            "credit_limit": 5000.0,
+            "opening_balance": 500.0,
+            "opening_type": "received",
+            "opening_notes": "Advance balance deposited (एडवांस जमा)"
+        }
+    ]
+
+    for c_info in demo_customers:
+        c_res = insert_customer(c_info, db_path=db_path)
+        # Add a couple of realistic recent transactions
+        if "Ramesh" in c_info["name"]:
+            insert_customer_transaction(c_res["id"], {
+                "date": today_str,
+                "type": "given",
+                "amount": 450.0,
+                "payment_mode": "credit",
+                "notes": "Atta 5kg + Ghee 500g",
+                "sync_with_hisab": False
+            }, db_path=db_path)
+            insert_customer_transaction(c_res["id"], {
+                "date": yesterday_str,
+                "type": "received",
+                "amount": 1000.0,
+                "payment_mode": "upi",
+                "notes": "GPay payment received",
+                "sync_with_hisab": False
+            }, db_path=db_path)
+        elif "Verma" in c_info["name"]:
+            insert_customer_transaction(c_res["id"], {
+                "date": today_str,
+                "type": "given",
+                "amount": 320.0,
+                "payment_mode": "credit",
+                "notes": "Sugar 2kg + Tea 500g",
+                "sync_with_hisab": False
+            }, db_path=db_path)
+
     print(f"Successfully seeded database with Indian Shopkeeper records:")
+    print(f"- {len(demo_customers)} Customers with Khata balances and transaction histories")
     print(f"- {len(DEMO_SUPPLIERS)} Suppliers with Khata transactions and due dates")
     print(f"- {len(DEMO_INVENTORY)} Tracked Inventory Items (with low-stock alerts)")
     print(f"- {len(demo_sales)} Daily Sales records across Cash, UPI, and Udhar")

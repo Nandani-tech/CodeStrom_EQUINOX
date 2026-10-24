@@ -155,6 +155,34 @@ def init_db(db_path=None):
     )
     """)
 
+    # 9. Customers Table (Customer Khata - ग्राहक खाता)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS customers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        phone TEXT,
+        address TEXT,
+        notes TEXT,
+        credit_limit REAL DEFAULT 0.0,
+        created_at TEXT NOT NULL
+    )
+    """)
+
+    # 10. Customer Transactions (You Gave / You Received)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS customer_transactions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        customer_id INTEGER NOT NULL,
+        date TEXT NOT NULL, -- YYYY-MM-DD
+        type TEXT NOT NULL, -- 'given' (आपने दिए / Udhar) or 'received' (आपको मिले / Payment)
+        amount REAL NOT NULL,
+        payment_mode TEXT DEFAULT 'cash', -- 'cash', 'upi', 'bank_transfer'
+        notes TEXT,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE
+    )
+    """)
+
     # Indices for performance
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_receipts_date ON receipts(date)")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_receipts_vendor ON receipts(vendor)")
@@ -164,6 +192,10 @@ def init_db(db_path=None):
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_supplier_tx_date ON supplier_transactions(date)")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_supplier_tx_supplier ON supplier_transactions(supplier_id)")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_inventory_stock ON inventory_items(current_stock)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_customer_name ON customers(name)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_customer_phone ON customers(phone)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_customer_tx_customer ON customer_transactions(customer_id)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_customer_tx_date ON customer_transactions(date)")
 
     conn.commit()
     conn.close()
@@ -1215,3 +1247,234 @@ def get_smart_actions(db_path=None):
 
     conn.close()
     return actions
+
+# ==============================================================================
+# 6. CUSTOMER KHATA (ग्राहक बहीखाता - आपने दिए / आपको मिले)
+# ==============================================================================
+
+def get_all_customers(db_path=None, search=None):
+    conn = get_db(db_path)
+    cursor = conn.cursor()
+    
+    query = """
+    SELECT 
+        c.*,
+        COALESCE(SUM(CASE WHEN ct.type = 'given' THEN ct.amount ELSE 0 END), 0) AS total_given,
+        COALESCE(SUM(CASE WHEN ct.type = 'received' THEN ct.amount ELSE 0 END), 0) AS total_received,
+        COALESCE(SUM(CASE WHEN ct.type = 'given' THEN ct.amount ELSE -ct.amount END), 0) AS balance_due,
+        MAX(ct.date) AS last_transaction_date,
+        COUNT(ct.id) AS tx_count
+    FROM customers c
+    LEFT JOIN customer_transactions ct ON c.id = ct.customer_id
+    """
+    params = []
+    if search and search.strip():
+        s = f"%{search.strip()}%"
+        query += " WHERE c.name LIKE ? OR c.phone LIKE ? OR c.notes LIKE ?"
+        params.extend([s, s, s])
+        
+    query += " GROUP BY c.id ORDER BY balance_due DESC, c.name ASC"
+    
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+    customers = [dict(row) for row in rows]
+    
+    # Calculate global customer khata summary
+    total_receivable = sum(c["balance_due"] for c in customers if c["balance_due"] > 0)
+    total_advance = sum(abs(c["balance_due"]) for c in customers if c["balance_due"] < 0)
+    
+    conn.close()
+    return {
+        "customers": customers,
+        "count": len(customers),
+        "total_receivable": total_receivable, # मार्केट से कुल लेना है (You'll receive)
+        "total_advance": total_advance        # ग्राहकों का एडवांस जमा (You owe)
+    }
+
+def get_customer_by_id(customer_id, db_path=None):
+    conn = get_db(db_path)
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT * FROM customers WHERE id = ?", (customer_id,))
+    c_row = cursor.fetchone()
+    if not c_row:
+        conn.close()
+        return None
+        
+    customer = dict(c_row)
+    
+    # Fetch customer transactions timeline
+    cursor.execute("""
+    SELECT * FROM customer_transactions 
+    WHERE customer_id = ? 
+    ORDER BY date DESC, id DESC
+    """, (customer_id,))
+    tx_rows = cursor.fetchall()
+    transactions = [dict(tx) for tx in tx_rows]
+    
+    total_given = sum(tx["amount"] for tx in transactions if tx["type"] == "given")
+    total_received = sum(tx["amount"] for tx in transactions if tx["type"] == "received")
+    balance_due = total_given - total_received
+    
+    customer["total_given"] = total_given
+    customer["total_received"] = total_received
+    customer["balance_due"] = balance_due
+    customer["transactions"] = transactions
+    
+    conn.close()
+    return customer
+
+def insert_customer(data, db_path=None):
+    conn = get_db(db_path)
+    cursor = conn.cursor()
+    now_str = datetime.now().isoformat()
+    
+    name = (data.get("name") or "").strip()
+    if not name:
+        conn.close()
+        raise ValueError("Customer name is required")
+        
+    cursor.execute("""
+    INSERT INTO customers (name, phone, address, notes, credit_limit, created_at)
+    VALUES (?, ?, ?, ?, ?, ?)
+    """, (
+        name,
+        (data.get("phone") or "").strip(),
+        (data.get("address") or "").strip(),
+        (data.get("notes") or "").strip(),
+        float(data.get("credit_limit") or 0.0),
+        now_str
+    ))
+    cid = cursor.lastrowid
+    
+    # If opening balance provided
+    opening_balance = float(data.get("opening_balance") or 0.0)
+    opening_type = data.get("opening_type", "given") # 'given' = customer owes shopkeeper
+    if opening_balance > 0:
+        cursor.execute("""
+        INSERT INTO customer_transactions (customer_id, date, type, amount, payment_mode, notes, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (
+            cid,
+            data.get("date") or datetime.now().strftime("%Y-%m-%d"),
+            opening_type,
+            opening_balance,
+            "cash",
+            data.get("opening_notes") or "Opening Khata Balance (शुरुआती बाकी)",
+            now_str
+        ))
+        
+    conn.commit()
+    conn.close()
+    return get_customer_by_id(cid, db_path)
+
+def update_customer(customer_id, data, db_path=None):
+    conn = get_db(db_path)
+    cursor = conn.cursor()
+    
+    name = (data.get("name") or "").strip()
+    if not name:
+        conn.close()
+        raise ValueError("Customer name is required")
+        
+    cursor.execute("""
+    UPDATE customers 
+    SET name = ?, phone = ?, address = ?, notes = ?, credit_limit = ?
+    WHERE id = ?
+    """, (
+        name,
+        (data.get("phone") or "").strip(),
+        (data.get("address") or "").strip(),
+        (data.get("notes") or "").strip(),
+        float(data.get("credit_limit") or 0.0),
+        customer_id
+    ))
+    conn.commit()
+    conn.close()
+    return get_customer_by_id(customer_id, db_path)
+
+def delete_customer(customer_id, db_path=None):
+    conn = get_db(db_path)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM customers WHERE id = ?", (customer_id,))
+    conn.commit()
+    conn.close()
+    return {"deleted": True, "customer_id": customer_id}
+
+def insert_customer_transaction(customer_id, data, db_path=None):
+    conn = get_db(db_path)
+    cursor = conn.cursor()
+    now_str = datetime.now().isoformat()
+    
+    amount = float(data.get("amount") or 0.0)
+    if amount <= 0:
+        conn.close()
+        raise ValueError("Transaction amount must be greater than zero")
+        
+    tx_type = data.get("type", "given").lower()
+    if tx_type not in ["given", "received"]:
+        tx_type = "given"
+        
+    tx_date = data.get("date") or datetime.now().strftime("%Y-%m-%d")
+    payment_mode = data.get("payment_mode", "cash")
+    notes = (data.get("notes") or "").strip()
+    
+    cursor.execute("""
+    INSERT INTO customer_transactions (customer_id, date, type, amount, payment_mode, notes, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+    """, (
+        customer_id,
+        tx_date,
+        tx_type,
+        amount,
+        payment_mode,
+        notes,
+        now_str
+    ))
+    tx_id = cursor.lastrowid
+    
+    # Also link to Daily Hisab / sales if type is 'given' (credit sale) or 'received' (payment)
+    if data.get("sync_with_hisab", True):
+        cursor.execute("SELECT name FROM customers WHERE id = ?", (customer_id,))
+        c_row = cursor.fetchone()
+        c_name = c_row["name"] if c_row else "Customer"
+        
+        if tx_type == "given":
+            # Record customer credit sale into sales table
+            cursor.execute("""
+            INSERT INTO sales (date, amount, payment_mode, customer_name, notes, created_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """, (
+                tx_date,
+                amount,
+                "credit",
+                c_name,
+                f"Khata Udhar: {notes}" if notes else "Khata Udhar",
+                now_str
+            ))
+        elif tx_type == "received":
+            # Record payment received into sales table (cash/upi)
+            cursor.execute("""
+            INSERT INTO sales (date, amount, payment_mode, customer_name, notes, created_at)
+            VALUES (?, ?, ?, ?, ?, ?)
+            """, (
+                tx_date,
+                amount,
+                payment_mode if payment_mode in ["cash", "upi"] else "cash",
+                c_name,
+                f"Khata Vasooli (Received): {notes}" if notes else "Khata Vasooli (Received)",
+                now_str
+            ))
+            
+    conn.commit()
+    conn.close()
+    return {"id": tx_id, "customer_id": customer_id, "amount": amount, "type": tx_type, "date": tx_date}
+
+def delete_customer_transaction(tx_id, db_path=None):
+    conn = get_db(db_path)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM customer_transactions WHERE id = ?", (tx_id,))
+    conn.commit()
+    conn.close()
+    return {"deleted": True, "transaction_id": tx_id}
+

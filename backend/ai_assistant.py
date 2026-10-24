@@ -344,3 +344,116 @@ CRITICAL RULES:
     result = synthesize_fallback_response(user_query, context)
     result["engine"] = "shopledger-python-analytics"
     return result
+
+# ==============================================================================
+# VOICE-TO-TRANSACTION PARSER (आवाज से खाता एंट्री)
+# ==============================================================================
+
+def parse_voice_khata_speech(spoken_text):
+    """
+    Parses natural spoken speech in Hindi, Hinglish, or English:
+    e.g.:
+    - "Received 500 rupees from Ramesh for milk" -> { customer_name: "Ramesh", amount: 500, type: "received", notes: "milk" }
+    - "रमेश को 500 रुपये उधार दिए" -> { customer_name: "रमेश", amount: 500, type: "given", notes: "उधार" }
+    - "Sharma ji gave 1200" -> { customer_name: "Sharma ji", amount: 1200, type: "received" }
+    - "Master ji ko 250 ka saman diya" -> { customer_name: "Master ji", amount: 250, type: "given", notes: "saman" }
+    """
+    if not spoken_text or not spoken_text.strip():
+        return {
+            "success": False,
+            "error": "No speech detected. Please speak clearly.",
+            "raw_text": spoken_text
+        }
+
+    raw = spoken_text.strip()
+    api_key = os.environ.get("GEMINI_API_KEY", "").strip()
+
+    if api_key:
+        try:
+            from google import genai
+            client = genai.Client(api_key=api_key)
+            prompt = f"""
+You are a voice transaction parser for an Indian Kirana shopkeeper's digital Khata book.
+The user spoke this in Hindi, Hinglish, or English:
+"{raw}"
+
+Extract the transaction intent into JSON with these exact keys:
+{{
+  "customer_name": "Name of customer (or empty string if not mentioned)",
+  "amount": number (positive float, e.g. 500.0, or null if not detected),
+  "type": "given" or "received",
+  "notes": "Short description of items or reason (or empty string)",
+  "confidence": number between 0.0 and 1.0,
+  "summary_hindi": "Clear Hindi summary e.g. 'रमेश से ₹500 मिले' or 'शर्मा जी को ₹200 का माल दिया'",
+  "summary_english": "Clear English summary e.g. 'Received ₹500 from Ramesh' or 'Gave ₹200 credit to Sharma ji'"
+}}
+
+Rules:
+- "diye", "give", "udhar", "diya", "baaki", "bheja", "saman diya", "credit" -> type: "given" (दुकानदार ने ग्राहक को दिए / उधार)
+- "mile", "mila", "jama", "paid", "received", "gpay kiya", "paytm", "cash diya", "aaye" -> type: "received" (दुकानदार को ग्राहक से मिले / भुगतान)
+- Return pure JSON only. Do not wrap in markdown or backticks.
+"""
+            resp = client.models.generate_content(
+                model="gemini-2.5-flash",
+                contents=prompt
+            )
+            if resp and resp.text:
+                cleaned = resp.text.strip()
+                if cleaned.startswith("```"):
+                    cleaned = re.sub(r'^```(?:json)?\n', '', cleaned)
+                    cleaned = re.sub(r'\n```$', '', cleaned)
+                parsed = json.loads(cleaned)
+                parsed["success"] = True
+                parsed["raw_text"] = raw
+                parsed["engine"] = "gemini-2.5-flash"
+                return parsed
+        except Exception as e:
+            print(f"Gemini voice parse fallback: {e}")
+
+    # Heuristic Regex & Rule-Based Fallback (Offline / No API Key)
+    # 1. Detect Amount (₹, Rs, rupees, रुपये, or pure digits)
+    amount = None
+    amt_match = re.search(r'(?:₹|rs\.?|inr|रुपये|रुपए)?\s*([0-9]+(?:\.[0-9]{1,2})?)\s*(?:₹|rs\.?|inr|रुपये|रुपए)?', raw, re.IGNORECASE)
+    if amt_match:
+        try:
+            amount = float(amt_match.group(1))
+        except Exception:
+            pass
+
+    # 2. Detect Type (given vs received)
+    lower = raw.lower()
+    given_words = ["diye", "diya", "udhar", "give", "gave", "credit", "baki", "baaki", "khatte", "khata", "saman"]
+    recv_words = ["mile", "mila", "jama", "receive", "received", "pay", "paid", "payment", "aaye", "gpay", "phonepe", "upi"]
+
+    is_recv = any(w in lower for w in recv_words)
+    is_given = any(w in lower for w in given_words)
+
+    if is_recv and not is_given:
+        tx_type = "received"
+    else:
+        tx_type = "given"
+
+    # 3. Customer name heuristic: words before "ko", "se", "from", "gave", "mile"
+    cust_match = re.search(r'([A-Za-z\u0900-\u097F\s]+?)\s+(?:se|ko|from|gave|ne|ji)\b', raw, re.IGNORECASE)
+    customer_name = ""
+    if cust_match:
+        customer_name = cust_match.group(1).strip()
+        # Clean filler words
+        customer_name = re.sub(r'^(received|record|add|gave|ek|new)\s+', '', customer_name, flags=re.IGNORECASE).strip()
+
+    summary_hi = f"{customer_name or 'ग्राहक'} को ₹{amount or 0} का सामान/उधार दिया" if tx_type == "given" else f"{customer_name or 'ग्राहक'} से ₹{amount or 0} प्राप्त हुए (मिले)"
+    summary_en = f"Gave ₹{amount or 0} credit to {customer_name or 'Customer'}" if tx_type == "given" else f"Received ₹{amount or 0} from {customer_name or 'Customer'}"
+
+    return {
+        "success": True if amount else False,
+        "customer_name": customer_name,
+        "amount": amount,
+        "type": tx_type,
+        "notes": raw,
+        "confidence": 0.85 if (amount and customer_name) else 0.6,
+        "summary_hindi": summary_hi,
+        "summary_english": summary_en,
+        "raw_text": raw,
+        "engine": "heuristic-nlp"
+    }
+

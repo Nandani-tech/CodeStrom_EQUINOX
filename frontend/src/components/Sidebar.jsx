@@ -13,7 +13,8 @@ import {
   BarChart2,
   Calculator,
   X,
-  Languages
+  Languages,
+  Users
 } from 'lucide-react';
 import { getCsvExportUrl } from '../api';
 
@@ -36,8 +37,15 @@ export default function Sidebar({
 
   const navGroups = [
     {
-      groupLabel: lang === 'hi' ? '🏪 दुकान प्रबंधन' : '🏪 Shop Management',
+      groupLabel: lang === 'hi' ? '🏪 दुकान बहीखाता' : '🏪 Shop Management',
       items: [
+        {
+          id: 'customers',
+          label: t?.tabs?.customers || 'Customer Khata',
+          icon: Users,
+          badge: null,
+          desc: t?.tabs?.customersDesc || 'You Gave / You Got (उधार)'
+        },
         {
           id: 'hisab',
           label: t?.tabs?.hisab || 'Daily Hisab',

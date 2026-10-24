@@ -46,11 +46,19 @@ from database import (
     # 4. Profit Overview
     get_profit_overview,
     # 5. Smart Actions
-    get_smart_actions
+    get_smart_actions,
+    # 6. Customer Khata
+    get_all_customers,
+    get_customer_by_id,
+    insert_customer,
+    update_customer,
+    delete_customer,
+    insert_customer_transaction,
+    delete_customer_transaction
 )
 from gemini_service import parse_with_gemini, fallback_heuristic_extractor
 from receipt_duplicates import detect_duplicates
-from ai_assistant import ask_assistant
+from ai_assistant import ask_assistant, parse_voice_khata_speech
 from seed_indian_data import seed_indian_shopkeeper_data
 
 app = Flask(__name__)
@@ -181,6 +189,108 @@ def record_supplier_transaction(supplier_id):
         "message": f"Supplier {data.get('type')} recorded successfully",
         "supplier": updated_supplier
     }), 201
+
+# ==============================================================================
+# 2B. CUSTOMER KHATA (ग्राहक बहीखाता API - आपने दिए / आपको मिले)
+# ==============================================================================
+
+@app.route("/api/customers", methods=["GET"])
+def list_customers():
+    search = request.args.get("search", "").strip()
+    data = get_all_customers(search=search if search else None)
+    return jsonify(data)
+
+@app.route("/api/customers/<int:customer_id>", methods=["GET"])
+def get_customer_detail(customer_id):
+    c = get_customer_by_id(customer_id)
+    if not c:
+        return jsonify({"error": f"Customer #{customer_id} not found"}), 404
+    return jsonify(c)
+
+@app.route("/api/customers", methods=["POST"])
+def add_customer():
+    data = request.get_json() or {}
+    name = (data.get("name") or "").strip()
+    if not name:
+        return jsonify({"error": "Customer name is required"}), 400
+    try:
+        created = insert_customer(data)
+        return jsonify({"message": f"Customer '{name}' added successfully", "customer": created}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+@app.route("/api/customers/<int:customer_id>", methods=["PUT"])
+def edit_customer(customer_id):
+    data = request.get_json() or {}
+    try:
+        updated = update_customer(customer_id, data)
+        return jsonify({"message": "Customer updated successfully", "customer": updated})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+@app.route("/api/customers/<int:customer_id>", methods=["DELETE"])
+def remove_customer(customer_id):
+    try:
+        res = delete_customer(customer_id)
+        return jsonify({"message": "Customer deleted successfully", "success": True})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+@app.route("/api/customers/<int:customer_id>/transactions", methods=["POST"])
+def record_customer_transaction_endpoint(customer_id):
+    data = request.get_json() or {}
+    amount = float(data.get("amount") or 0.0)
+    tx_type = (data.get("type") or "").lower()
+    if amount <= 0 or tx_type not in ["given", "received"]:
+        return jsonify({"error": "Valid amount (> 0) and transaction type ('given' or 'received') are required"}), 400
+    try:
+        result = insert_customer_transaction(customer_id, data)
+        updated_customer = get_customer_by_id(customer_id)
+        action_label = "आपने दिए (You gave)" if tx_type == "given" else "आपको मिले (You received)"
+        return jsonify({
+            "message": f"₹{amount:,.2f} {action_label} successfully recorded",
+            "transaction": result,
+            "customer": updated_customer
+        }), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+@app.route("/api/customers/transactions/<int:tx_id>", methods=["DELETE"])
+def remove_customer_transaction(tx_id):
+    try:
+        delete_customer_transaction(tx_id)
+        return jsonify({"message": "Transaction deleted", "success": True})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+# ==============================================================================
+# VOICE KHATA PARSER API (आवाज से खाता एंट्री API)
+# ==============================================================================
+
+@app.route("/api/voice/parse-khata", methods=["POST"])
+def voice_parse_khata_endpoint():
+    data = request.get_json() or {}
+    speech_text = (data.get("speech_text") or data.get("text") or "").strip()
+    if not speech_text:
+        return jsonify({"error": "Speech text is required"}), 400
+    
+    parsed = parse_voice_khata_speech(speech_text)
+    
+    # Try fuzzy matching customer against registered customers in database
+    if parsed.get("customer_name"):
+        c_search = get_all_customers(search=parsed["customer_name"])
+        matched_customers = c_search.get("customers", [])
+        if matched_customers:
+            parsed["matched_customer"] = {
+                "id": matched_customers[0]["id"],
+                "name": matched_customers[0]["name"],
+                "phone": matched_customers[0].get("phone"),
+                "balance_due": matched_customers[0].get("balance_due", 0.0)
+            }
+        else:
+            parsed["matched_customer"] = None
+            
+    return jsonify(parsed)
 
 # ==============================================================================
 # 3. SMART STOCK (स्मार्ट स्टॉक & INVENTORY API)

@@ -107,6 +107,88 @@ export async function recordSupplierTransaction(supplierId, txData) {
 }
 
 // ==============================================================================
+// 2B. CUSTOMER KHATA (ग्राहक खाता) & VOICE PARSER
+// ==============================================================================
+
+export async function fetchCustomers(search = '') {
+  const url = search ? `${API_BASE}/customers?search=${encodeURIComponent(search)}` : `${API_BASE}/customers`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Failed to fetch customers');
+  return res.json();
+}
+
+export async function fetchCustomerById(id) {
+  const res = await fetch(`${API_BASE}/customers/${id}`);
+  if (!res.ok) throw new Error(`Failed to fetch customer #${id}`);
+  return res.json();
+}
+
+export async function createCustomer(data) {
+  const res = await fetch(`${API_BASE}/customers`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: jsonStringify(data),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || 'Failed to add customer');
+  }
+  return res.json();
+}
+
+export async function updateCustomer(id, data) {
+  const res = await fetch(`${API_BASE}/customers/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: jsonStringify(data),
+  });
+  if (!res.ok) throw new Error('Failed to update customer');
+  return res.json();
+}
+
+export async function deleteCustomer(id) {
+  const res = await fetch(`${API_BASE}/customers/${id}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error('Failed to delete customer');
+  return res.json();
+}
+
+export async function recordCustomerTransaction(customerId, txData) {
+  const res = await fetch(`${API_BASE}/customers/${customerId}/transactions`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: jsonStringify(txData),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || 'Failed to record customer transaction');
+  }
+  return res.json();
+}
+
+export async function deleteCustomerTransaction(txId) {
+  const res = await fetch(`${API_BASE}/customers/transactions/${txId}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error('Failed to delete transaction');
+  return res.json();
+}
+
+export async function parseVoiceKhata(speechText) {
+  const res = await fetch(`${API_BASE}/voice/parse-khata`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: jsonStringify({ speech_text: speechText }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || 'Failed to parse speech');
+  }
+  return res.json();
+}
+
+// ==============================================================================
 // 3. SMART STOCK
 // ==============================================================================
 

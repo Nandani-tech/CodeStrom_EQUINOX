@@ -12,11 +12,17 @@ import {
   Store,
   Package,
   BarChart2,
-  Languages
+  Languages,
+  Users
 } from 'lucide-react';
 import { getCsvExportUrl } from '../api';
 
 const TAB_INFO = {
+  customers: {
+    en: { title: 'Customer Khata', subtitle: 'You gave / You got, customer running balances, voice entry & WhatsApp reminders' },
+    hi: { title: 'ग्राहक बहीखाता', subtitle: 'उधार खाता (आपने दिए / आपको मिले), आवाज से एंट्री व तकादा' },
+    icon: Users
+  },
   hisab: {
     en: { title: 'Daily Hisab', subtitle: 'Daily sales, cash in hand, expenses & customer credit tracking' },
     hi: { title: 'दैनिक हिसाब', subtitle: 'आज की बिक्री, गल्ला, खर्चे और ग्राहकों का उधार' },

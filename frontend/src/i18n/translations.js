@@ -8,6 +8,8 @@ export const translations = {
 
     // Tabs
     tabs: {
+      customers: "Customer Khata",
+      customersDesc: "You Gave / You Got (उधार)",
       hisab: "Daily Hisab",
       hisabDesc: "Sales, Cash & Expenses",
       suppliers: "Supplier Khata",
@@ -152,6 +154,8 @@ export const translations = {
 
     // Tabs
     tabs: {
+      customers: "ग्राहक खाता",
+      customersDesc: "उधार व जमा (You Gave/Got)",
       hisab: "दैनिक हिसाब",
       hisabDesc: "बिक्री, गल्ला व खर्चे",
       suppliers: "सप्लायर खाता",
