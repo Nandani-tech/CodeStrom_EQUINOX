@@ -1,0 +1,6 @@
+{
+  "name": "ShopLedger",
+  "description": "AI Business Expense Tracker, Smart Khata, Daily Hisab & Receipt Auditor for Small Retailers",
+  "version": "2.0.0",
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
